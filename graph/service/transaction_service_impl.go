@@ -10,9 +10,9 @@ type TransactionServiceImpl struct {
 	repository.TransactionRepository
 }
 
-func NewTransactionService(transactionRepository *repository.TransactionRepository) TransactionService {
+func NewTransactionService(transactionRepository repository.TransactionRepository) TransactionService {
 	return &TransactionServiceImpl{
-		TransactionRepository: *transactionRepository,
+		TransactionRepository: transactionRepository,
 	}
 }
 
