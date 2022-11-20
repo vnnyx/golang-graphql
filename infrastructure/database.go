@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewMongoDatabase(configuration Config) *mongo.Database {
+func NewMongoDatabase(configuration *Config) *mongo.Database {
 	ctx, cancel := NewMongoContext()
 	defer cancel()
 

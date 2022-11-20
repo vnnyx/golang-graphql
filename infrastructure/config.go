@@ -13,7 +13,7 @@ type Config struct {
 	MongoDatabae           string `mapstructure:"MONGO_DATABASE"`
 }
 
-func NewConfig() (*Config, error) {
+func NewConfig() *Config {
 	config := &Config{}
 	viper.AddConfigPath(".")
 	viper.SetConfigName(".env")
@@ -25,5 +25,5 @@ func NewConfig() (*Config, error) {
 	exception.PanicIfNeeded(err)
 	err = viper.Unmarshal(&config)
 	exception.PanicIfNeeded(err)
-	return config, err
+	return config
 }
