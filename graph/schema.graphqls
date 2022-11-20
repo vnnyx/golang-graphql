@@ -1,0 +1,61 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Transaction{
+  id: ID!
+  name: String!
+}
+
+type User{
+  id: ID!
+  username: String!
+  email: String!
+  transactions: [Transaction!]!
+}
+
+type Query{
+  transactions: [Transaction!]!
+  users: [User!]!
+  transactionById(input: GetTransactoinById!):Transaction! 
+  userById(input: GetUserById!):User!
+}
+
+input NewUser{
+  username: String!
+  email: String!
+}
+
+input NewTransaction{
+  name: String!
+  userId: ID!
+}
+
+input TransactionById{
+  id: ID!
+}
+
+input UpdateUserByIdRequest{
+  id: ID!
+}
+
+input DeleteUserByIdRequest{
+  id: ID!
+}
+
+input GetUserById{
+  id: ID!
+}
+
+input GetTransactoinById{
+  id: ID!
+}
+
+type Mutation{
+  createTransaction(input: NewTransaction!): Transaction!
+  createUser(input: NewUser!): User!
+  deleteUserById(input: DeleteUserByIdRequest): Boolean!
+  updateUserById(input: UpdateUserByIdRequest): Boolean!
+}
+
+
