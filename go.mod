@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.20
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/google/uuid v1.1.2
+	github.com/google/wire v0.5.0
 	github.com/spf13/viper v1.14.0
 	github.com/vektah/gqlparser/v2 v2.5.1
 	go.mongodb.org/mongo-driver v1.11.0
