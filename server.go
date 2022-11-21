@@ -5,13 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/golang-graphql/graph"
-	"github.com/golang-graphql/graph/generated"
-	"github.com/golang-graphql/graph/repository"
-	"github.com/golang-graphql/graph/service"
-	"github.com/golang-graphql/infrastructure"
+	"github.com/golang-graphql/wire"
 )
 
 const defaultPort = "8080"
@@ -22,19 +17,7 @@ func main() {
 		port = defaultPort
 	}
 
-	config, _ := infrastructure.NewConfig()
-	mongo := infrastructure.NewMongoDatabase(*config)
-
-	userRepository := repository.NewUserRepository(mongo)
-	transactionRepository := repository.NewTransactionRepository(mongo)
-
-	userService := service.NewUserService(&userRepository)
-	transactionService := service.NewTransactionService(&transactionRepository)
-
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{
-		UserService:        userService,
-		TransactionService: transactionService,
-	}}))
+	srv := wire.InitializedServer()
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)

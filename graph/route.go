@@ -11,25 +11,28 @@ import (
 )
 
 type Route struct {
-	Router  *chi.Mux
-	Service service.UserService
+	Router             *chi.Mux
+	UserService        service.UserService
+	TransactionService service.TransactionService
 }
 
-func New(router *chi.Mux, service service.UserService) *Route {
+func New(router *chi.Mux, userService service.UserService, transactionService service.TransactionService) *Route {
 	return &Route{
-		Router:  router,
-		Service: service,
+		Router:             router,
+		UserService:        userService,
+		TransactionService: transactionService,
 	}
 }
 
 func (r *Route) InitRoute() {
-	r.Router.Post("/query", graphQLHandler(r.Service))
-	// r.Router.Get("/", playgroundQLHandler("/query"))
+	r.Router.Post("/query", graphQLHandler(r.UserService, r.TransactionService))
+	r.Router.Get("/", playgroundQLHandler("/query"))
 }
 
-func graphQLHandler(service service.UserService) http.HandlerFunc {
+func graphQLHandler(userService service.UserService, transactionService service.TransactionService) http.HandlerFunc {
 	h := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &Resolver{
-		UserService: service,
+		UserService:        userService,
+		TransactionService: transactionService,
 	}}))
 
 	return h.ServeHTTP
