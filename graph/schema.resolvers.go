@@ -33,11 +33,6 @@ func (r *mutationResolver) UpdateUserByID(ctx context.Context, input *model.Upda
 	return r.UserService.UpdateUserById(input)
 }
 
-// Transactions is the resolver for the transactions field.
-func (r *queryResolver) Transactions(ctx context.Context) ([]*model.Transaction, error) {
-	panic(fmt.Errorf("not implemented: Transactions - transactions"))
-}
-
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 	res, err := r.UserService.GetAllUser()
@@ -47,6 +42,11 @@ func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
 // TransactionByID is the resolver for the transactionById field.
 func (r *queryResolver) TransactionByID(ctx context.Context, input model.GetTransactoinByID) (*model.Transaction, error) {
 	panic(fmt.Errorf("not implemented: TransactionByID - transactionById"))
+}
+
+// TransactoinByUserID is the resolver for the transactoinByUserId field.
+func (r *queryResolver) TransactoinByUserID(ctx context.Context, input model.GetTransactoinByUserID) ([]*model.Transaction, error) {
+	return r.TransactionService.GetTransactionByUserId(input.UserID)
 }
 
 // UserByID is the resolver for the userById field.

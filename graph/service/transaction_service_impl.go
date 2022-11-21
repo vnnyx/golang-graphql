@@ -33,3 +33,18 @@ func (service *TransactionServiceImpl) InsertTransaction(request model.NewTransa
 
 	return response, nil
 }
+
+func (service *TransactionServiceImpl) GetTransactionByUserId(userId string) ([]*model.Transaction, error) {
+	got, err := service.TransactionRepository.GetTransactionByUserId(userId)
+	if err != nil {
+		return []*model.Transaction{}, err
+	}
+	transactions := []*model.Transaction{}
+	for _, t := range got {
+		transactions = append(transactions, &model.Transaction{
+			ID:   t.ID,
+			Name: t.Name,
+		})
+	}
+	return transactions, nil
+}

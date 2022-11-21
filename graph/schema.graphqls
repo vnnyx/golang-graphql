@@ -15,9 +15,9 @@ type User{
 }
 
 type Query{
-  transactions: [Transaction!]!
   users: [User!]!
-  transactionById(input: GetTransactoinById!):Transaction! 
+  transactionById(input: GetTransactoinById!):Transaction!
+  transactoinByUserId(input: GetTransactoinByUserId!):[Transaction]!
   userById(input: GetUserById!):User!
 }
 
@@ -51,6 +51,10 @@ input GetUserById{
 
 input GetTransactoinById{
   id: ID!
+}
+
+input GetTransactoinByUserId{
+  userId: ID!
 }
 
 type Mutation{
