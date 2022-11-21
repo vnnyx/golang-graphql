@@ -30,7 +30,7 @@ func (r *mutationResolver) DeleteUserByID(ctx context.Context, input *model.Dele
 
 // UpdateUserByID is the resolver for the updateUserById field.
 func (r *mutationResolver) UpdateUserByID(ctx context.Context, input *model.UpdateUserByIDRequest) (bool, error) {
-	panic(fmt.Errorf("not implemented: UpdateUserByID - updateUserById"))
+	return r.UserService.UpdateUserById(input)
 }
 
 // Transactions is the resolver for the transactions field.
@@ -51,7 +51,8 @@ func (r *queryResolver) TransactionByID(ctx context.Context, input model.GetTran
 
 // UserByID is the resolver for the userById field.
 func (r *queryResolver) UserByID(ctx context.Context, input model.GetUserByID) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: UserByID - userById"))
+	res, err := r.UserService.FindUserById(input.ID)
+	return res, err
 }
 
 // Mutation returns generated.MutationResolver implementation.

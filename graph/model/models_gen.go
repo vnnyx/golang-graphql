@@ -34,7 +34,9 @@ type TransactionByID struct {
 }
 
 type UpdateUserByIDRequest struct {
-	ID string `json:"id"`
+	ID       string `json:"id"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
 }
 
 type User struct {

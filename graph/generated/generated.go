@@ -341,6 +341,8 @@ input TransactionById{
 
 input UpdateUserByIdRequest{
   id: ID!
+  username: String!
+  email: String!
 }
 
 input DeleteUserByIdRequest{
@@ -3343,7 +3345,7 @@ func (ec *executionContext) unmarshalInputUpdateUserByIdRequest(ctx context.Cont
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id"}
+	fieldsInOrder := [...]string{"id", "username", "email"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3355,6 +3357,22 @@ func (ec *executionContext) unmarshalInputUpdateUserByIdRequest(ctx context.Cont
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
 			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "username":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+			it.Username, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

@@ -42,3 +42,25 @@ func (repository *UserRepositoryImpl) FindAllUser() (users model.ListUserEntity,
 
 	return users, nil
 }
+
+func (repository *UserRepositoryImpl) FindUserById(userId string) (user model.UserEntity, err error) {
+	ctx, cancel := infrastructure.NewMongoContext()
+	defer cancel()
+
+	err = repository.Collection.FindOne(ctx, bson.M{"_id": userId}).Decode(&user)
+	return user, err
+}
+
+func (repository *UserRepositoryImpl) UpdateUserById(user model.UpdateUserEntity) (bool, error) {
+	ctx, cancel := infrastructure.NewMongoContext()
+	defer cancel()
+
+	filter := bson.M{"_id": user.ID}
+	update := bson.M{"$set": user}
+
+	_, err := repository.Collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

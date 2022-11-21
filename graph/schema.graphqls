@@ -37,6 +37,8 @@ input TransactionById{
 
 input UpdateUserByIdRequest{
   id: ID!
+  username: String!
+  email: String!
 }
 
 input DeleteUserByIdRequest{
