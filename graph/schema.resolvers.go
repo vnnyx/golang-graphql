@@ -25,7 +25,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 
 // DeleteUserByID is the resolver for the deleteUserById field.
 func (r *mutationResolver) DeleteUserByID(ctx context.Context, input *model.DeleteUserByIDRequest) (bool, error) {
-	panic(fmt.Errorf("not implemented: DeleteUserByID - deleteUserById"))
+	return r.UserService.DeleteUserById(input)
 }
 
 // UpdateUserByID is the resolver for the updateUserById field.

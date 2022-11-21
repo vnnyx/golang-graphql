@@ -7,4 +7,5 @@ type UserService interface {
 	GetAllUser() ([]*model.User, error)
 	FindUserById(userId string) (*model.User, error)
 	UpdateUserById(request *model.UpdateUserByIDRequest) (bool, error)
+	DeleteUserById(request *model.DeleteUserByIDRequest) (bool, error)
 }

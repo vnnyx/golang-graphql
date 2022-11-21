@@ -7,4 +7,5 @@ type UserRepository interface {
 	FindAllUser() (users model.ListUserEntity, err error)
 	FindUserById(userId string) (user model.UserEntity, err error)
 	UpdateUserById(user model.UpdateUserEntity) (bool, error)
+	DeleteUserById(userId string) (bool, error)
 }

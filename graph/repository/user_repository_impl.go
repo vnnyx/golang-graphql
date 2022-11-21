@@ -64,3 +64,15 @@ func (repository *UserRepositoryImpl) UpdateUserById(user model.UpdateUserEntity
 	}
 	return true, nil
 }
+
+func (repository *UserRepositoryImpl) DeleteUserById(userId string) (bool, error) {
+	ctx, cancel := infrastructure.NewMongoContext()
+	defer cancel()
+
+	filter := bson.M{"_id": userId}
+	_, err := repository.Collection.DeleteOne(ctx, filter)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}

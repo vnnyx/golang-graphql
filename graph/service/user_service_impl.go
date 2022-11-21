@@ -93,3 +93,7 @@ func (service *UserServiceImpl) UpdateUserById(request *model.UpdateUserByIDRequ
 	})
 	return got, err
 }
+
+func (service *UserServiceImpl) DeleteUserById(request *model.DeleteUserByIDRequest) (bool, error) {
+	return service.UserRepository.DeleteUserById(request.ID)
+}
