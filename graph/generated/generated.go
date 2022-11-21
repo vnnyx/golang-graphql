@@ -52,10 +52,9 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		TransactionByID func(childComplexity int, input model.GetTransactoinByID) int
-		Transactions    func(childComplexity int) int
-		UserByID        func(childComplexity int, input model.GetUserByID) int
-		Users           func(childComplexity int) int
+		TransactoinByUserID func(childComplexity int, input model.GetTransactoinByUserID) int
+		UserByID            func(childComplexity int, input model.GetUserByID) int
+		Users               func(childComplexity int) int
 	}
 
 	Transaction struct {
@@ -78,9 +77,8 @@ type MutationResolver interface {
 	UpdateUserByID(ctx context.Context, input *model.UpdateUserByIDRequest) (bool, error)
 }
 type QueryResolver interface {
-	Transactions(ctx context.Context) ([]*model.Transaction, error)
 	Users(ctx context.Context) ([]*model.User, error)
-	TransactionByID(ctx context.Context, input model.GetTransactoinByID) (*model.Transaction, error)
+	TransactoinByUserID(ctx context.Context, input model.GetTransactoinByUserID) ([]*model.Transaction, error)
 	UserByID(ctx context.Context, input model.GetUserByID) (*model.User, error)
 }
 
@@ -147,24 +145,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateUserByID(childComplexity, args["input"].(*model.UpdateUserByIDRequest)), true
 
-	case "Query.transactionById":
-		if e.complexity.Query.TransactionByID == nil {
+	case "Query.transactoinByUserId":
+		if e.complexity.Query.TransactoinByUserID == nil {
 			break
 		}
 
-		args, err := ec.field_Query_transactionById_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_transactoinByUserId_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.TransactionByID(childComplexity, args["input"].(model.GetTransactoinByID)), true
-
-	case "Query.transactions":
-		if e.complexity.Query.Transactions == nil {
-			break
-		}
-
-		return e.complexity.Query.Transactions(childComplexity), true
+		return e.complexity.Query.TransactoinByUserID(childComplexity, args["input"].(model.GetTransactoinByUserID)), true
 
 	case "Query.userById":
 		if e.complexity.Query.UserByID == nil {
@@ -236,11 +227,10 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputDeleteUserByIdRequest,
-		ec.unmarshalInputGetTransactoinById,
+		ec.unmarshalInputGetTransactoinByUserId,
 		ec.unmarshalInputGetUserById,
 		ec.unmarshalInputNewTransaction,
 		ec.unmarshalInputNewUser,
-		ec.unmarshalInputTransactionById,
 		ec.unmarshalInputUpdateUserByIdRequest,
 	)
 	first := true
@@ -319,9 +309,8 @@ type User{
 }
 
 type Query{
-  transactions: [Transaction!]!
   users: [User!]!
-  transactionById(input: GetTransactoinById!):Transaction! 
+  transactoinByUserId(input: GetTransactoinByUserId!):[Transaction]!
   userById(input: GetUserById!):User!
 }
 
@@ -335,12 +324,10 @@ input NewTransaction{
   userId: ID!
 }
 
-input TransactionById{
-  id: ID!
-}
-
 input UpdateUserByIdRequest{
   id: ID!
+  username: String!
+  email: String!
 }
 
 input DeleteUserByIdRequest{
@@ -351,8 +338,8 @@ input GetUserById{
   id: ID!
 }
 
-input GetTransactoinById{
-  id: ID!
+input GetTransactoinByUserId{
+  userId: ID!
 }
 
 type Mutation{
@@ -446,13 +433,13 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_transactionById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_transactoinByUserId_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.GetTransactoinByID
+	var arg0 model.GetTransactoinByUserID
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNGetTransactoinById2githubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐGetTransactoinByID(ctx, tmp)
+		arg0, err = ec.unmarshalNGetTransactoinByUserId2githubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐGetTransactoinByUserID(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -750,56 +737,6 @@ func (ec *executionContext) fieldContext_Mutation_updateUserById(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_transactions(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_transactions(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Transactions(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Transaction)
-	fc.Result = res
-	return ec.marshalNTransaction2ᚕᚖgithubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐTransactionᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_transactions(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Transaction_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Transaction_name(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Transaction", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_users(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_users(ctx, field)
 	if err != nil {
@@ -854,8 +791,8 @@ func (ec *executionContext) fieldContext_Query_users(ctx context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_transactionById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_transactionById(ctx, field)
+func (ec *executionContext) _Query_transactoinByUserId(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_transactoinByUserId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -868,7 +805,7 @@ func (ec *executionContext) _Query_transactionById(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().TransactionByID(rctx, fc.Args["input"].(model.GetTransactoinByID))
+		return ec.resolvers.Query().TransactoinByUserID(rctx, fc.Args["input"].(model.GetTransactoinByUserID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -880,12 +817,12 @@ func (ec *executionContext) _Query_transactionById(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Transaction)
+	res := resTmp.([]*model.Transaction)
 	fc.Result = res
-	return ec.marshalNTransaction2ᚖgithubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐTransaction(ctx, field.Selections, res)
+	return ec.marshalNTransaction2ᚕᚖgithubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐTransaction(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_transactionById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_transactoinByUserId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -908,7 +845,7 @@ func (ec *executionContext) fieldContext_Query_transactionById(ctx context.Conte
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_transactionById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_transactoinByUserId_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -3180,25 +3117,25 @@ func (ec *executionContext) unmarshalInputDeleteUserByIdRequest(ctx context.Cont
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputGetTransactoinById(ctx context.Context, obj interface{}) (model.GetTransactoinByID, error) {
-	var it model.GetTransactoinByID
+func (ec *executionContext) unmarshalInputGetTransactoinByUserId(ctx context.Context, obj interface{}) (model.GetTransactoinByUserID, error) {
+	var it model.GetTransactoinByUserID
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id"}
+	fieldsInOrder := [...]string{"userId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "id":
+		case "userId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			it.UserID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3308,14 +3245,14 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputTransactionById(ctx context.Context, obj interface{}) (model.TransactionByID, error) {
-	var it model.TransactionByID
+func (ec *executionContext) unmarshalInputUpdateUserByIdRequest(ctx context.Context, obj interface{}) (model.UpdateUserByIDRequest, error) {
+	var it model.UpdateUserByIDRequest
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id"}
+	fieldsInOrder := [...]string{"id", "username", "email"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3330,31 +3267,19 @@ func (ec *executionContext) unmarshalInputTransactionById(ctx context.Context, o
 			if err != nil {
 				return it, err
 			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputUpdateUserByIdRequest(ctx context.Context, obj interface{}) (model.UpdateUserByIDRequest, error) {
-	var it model.UpdateUserByIDRequest
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"id"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "id":
+		case "username":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+			it.Username, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "email":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			it.Email, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -3457,29 +3382,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "transactions":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_transactions(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
 		case "users":
 			field := field
 
@@ -3503,7 +3405,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "transactionById":
+		case "transactoinByUserId":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -3512,7 +3414,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_transactionById(ctx, field)
+				res = ec._Query_transactoinByUserId(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -3989,8 +3891,8 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNGetTransactoinById2githubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐGetTransactoinByID(ctx context.Context, v interface{}) (model.GetTransactoinByID, error) {
-	res, err := ec.unmarshalInputGetTransactoinById(ctx, v)
+func (ec *executionContext) unmarshalNGetTransactoinByUserId2githubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐGetTransactoinByUserID(ctx context.Context, v interface{}) (model.GetTransactoinByUserID, error) {
+	res, err := ec.unmarshalInputGetTransactoinByUserId(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -4041,6 +3943,44 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) marshalNTransaction2githubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐTransaction(ctx context.Context, sel ast.SelectionSet, v model.Transaction) graphql.Marshaler {
 	return ec._Transaction(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTransaction2ᚕᚖgithubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐTransaction(ctx context.Context, sel ast.SelectionSet, v []*model.Transaction) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOTransaction2ᚖgithubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐTransaction(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
 }
 
 func (ec *executionContext) marshalNTransaction2ᚕᚖgithubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐTransactionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Transaction) graphql.Marshaler {
@@ -4456,6 +4396,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOTransaction2ᚖgithubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐTransaction(ctx context.Context, sel ast.SelectionSet, v *model.Transaction) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Transaction(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOUpdateUserByIdRequest2ᚖgithubᚗcomᚋgolangᚑgraphqlᚋgraphᚋmodelᚐUpdateUserByIDRequest(ctx context.Context, v interface{}) (*model.UpdateUserByIDRequest, error) {

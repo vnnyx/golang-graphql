@@ -29,3 +29,15 @@ func (repository *TransactionRepositoryImpl) InsertTransaction(transaction model
 	}
 	return nil
 }
+
+func (repository *TransactionRepositoryImpl) GetTransactionByUserId(userId string) ([]*model.TransactionEntity, error) {
+	ctx, cancel := infrastructure.NewMongoContext()
+	defer cancel()
+
+	user := model.UserEntity{}
+
+	filter := bson.M{"_id": userId}
+	err := repository.Collection.FindOne(ctx, filter).Decode(&user)
+
+	return user.Transaction, err
+}

@@ -15,9 +15,8 @@ type User{
 }
 
 type Query{
-  transactions: [Transaction!]!
   users: [User!]!
-  transactionById(input: GetTransactoinById!):Transaction! 
+  transactoinByUserId(input: GetTransactoinByUserId!):[Transaction]!
   userById(input: GetUserById!):User!
 }
 
@@ -31,12 +30,10 @@ input NewTransaction{
   userId: ID!
 }
 
-input TransactionById{
-  id: ID!
-}
-
 input UpdateUserByIdRequest{
   id: ID!
+  username: String!
+  email: String!
 }
 
 input DeleteUserByIdRequest{
@@ -47,8 +44,8 @@ input GetUserById{
   id: ID!
 }
 
-input GetTransactoinById{
-  id: ID!
+input GetTransactoinByUserId{
+  userId: ID!
 }
 
 type Mutation{

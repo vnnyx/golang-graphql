@@ -16,7 +16,7 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	}
 }
 
-func (service *UserServiceImpl) Create(request model.NewUser) (model.User, error) {
+func (service *UserServiceImpl) Create(request model.NewUser) (*model.User, error) {
 	id := uuid.New().String()
 	err := service.UserRepository.InsertUser(model.UserEntity{
 		ID:       id,
@@ -24,10 +24,10 @@ func (service *UserServiceImpl) Create(request model.NewUser) (model.User, error
 		Email:    request.Email,
 	})
 	if err != nil {
-		return model.User{}, err
+		return &model.User{}, err
 	}
 
-	response := model.User{
+	response := &model.User{
 		ID:       id,
 		Username: request.Username,
 		Email:    request.Email,
@@ -59,4 +59,41 @@ func (service *UserServiceImpl) GetAllUser() ([]*model.User, error) {
 		})
 	}
 	return listUser, nil
+}
+
+func (servie *UserServiceImpl) FindUserById(userId string) (*model.User, error) {
+	user, err := servie.UserRepository.FindUserById(userId)
+	if err != nil {
+		return &model.User{}, err
+	}
+
+	transaction := []*model.Transaction{}
+	for _, t := range user.Transaction {
+		transaction = append(transaction, &model.Transaction{
+			ID:   t.ID,
+			Name: t.Name,
+		})
+	}
+
+	response := &model.User{
+		ID:           user.ID,
+		Email:        user.Email,
+		Username:     user.Username,
+		Transactions: transaction,
+	}
+
+	return response, nil
+}
+
+func (service *UserServiceImpl) UpdateUserById(request *model.UpdateUserByIDRequest) (bool, error) {
+	got, err := service.UserRepository.UpdateUserById(model.UpdateUserEntity{
+		ID:       request.ID,
+		Username: request.Username,
+		Email:    request.Email,
+	})
+	return got, err
+}
+
+func (service *UserServiceImpl) DeleteUserById(request *model.DeleteUserByIDRequest) (bool, error) {
+	return service.UserRepository.DeleteUserById(request.ID)
 }
