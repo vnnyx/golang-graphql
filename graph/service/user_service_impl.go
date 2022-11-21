@@ -16,7 +16,7 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	}
 }
 
-func (service *UserServiceImpl) Create(request model.NewUser) (model.User, error) {
+func (service *UserServiceImpl) Create(request model.NewUser) (*model.User, error) {
 	id := uuid.New().String()
 	err := service.UserRepository.InsertUser(model.UserEntity{
 		ID:       id,
@@ -24,10 +24,10 @@ func (service *UserServiceImpl) Create(request model.NewUser) (model.User, error
 		Email:    request.Email,
 	})
 	if err != nil {
-		return model.User{}, err
+		return &model.User{}, err
 	}
 
-	response := model.User{
+	response := &model.User{
 		ID:       id,
 		Username: request.Username,
 		Email:    request.Email,

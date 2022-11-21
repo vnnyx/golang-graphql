@@ -13,14 +13,12 @@ import (
 
 // CreateTransaction is the resolver for the createTransaction field.
 func (r *mutationResolver) CreateTransaction(ctx context.Context, input model.NewTransaction) (*model.Transaction, error) {
-	res, err := r.TransactionService.InsertTransaction(input)
-	return &res, err
+	return r.TransactionService.InsertTransaction(input)
 }
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (*model.User, error) {
-	res, err := r.UserService.Create(input)
-	return &res, err
+	return r.UserService.Create(input)
 }
 
 // DeleteUserByID is the resolver for the deleteUserById field.

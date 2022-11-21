@@ -16,17 +16,17 @@ func NewTransactionService(transactionRepository repository.TransactionRepositor
 	}
 }
 
-func (service *TransactionServiceImpl) InsertTransaction(request model.NewTransaction) (model.Transaction, error) {
+func (service *TransactionServiceImpl) InsertTransaction(request model.NewTransaction) (*model.Transaction, error) {
 	id := uuid.New().String()
 	err := service.TransactionRepository.InsertTransaction(model.TransactionEntity{
 		ID:   id,
 		Name: request.Name},
 		request.UserID)
 	if err != nil {
-		return model.Transaction{}, err
+		return &model.Transaction{}, err
 	}
 
-	response := model.Transaction{
+	response := &model.Transaction{
 		ID:   id,
 		Name: request.Name,
 	}
