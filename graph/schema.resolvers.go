@@ -5,7 +5,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/golang-graphql/graph/generated"
 	"github.com/golang-graphql/graph/model"
@@ -33,13 +32,7 @@ func (r *mutationResolver) UpdateUserByID(ctx context.Context, input *model.Upda
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context) ([]*model.User, error) {
-	res, err := r.UserService.GetAllUser()
-	return res, err
-}
-
-// TransactionByID is the resolver for the transactionById field.
-func (r *queryResolver) TransactionByID(ctx context.Context, input model.GetTransactoinByID) (*model.Transaction, error) {
-	panic(fmt.Errorf("not implemented: TransactionByID - transactionById"))
+	return r.UserService.GetAllUser()
 }
 
 // TransactoinByUserID is the resolver for the transactoinByUserId field.

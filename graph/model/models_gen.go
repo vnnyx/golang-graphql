@@ -6,10 +6,6 @@ type DeleteUserByIDRequest struct {
 	ID string `json:"id"`
 }
 
-type GetTransactoinByID struct {
-	ID string `json:"id"`
-}
-
 type GetTransactoinByUserID struct {
 	UserID string `json:"userId"`
 }
@@ -31,10 +27,6 @@ type NewUser struct {
 type Transaction struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-type TransactionByID struct {
-	ID string `json:"id"`
 }
 
 type UpdateUserByIDRequest struct {
